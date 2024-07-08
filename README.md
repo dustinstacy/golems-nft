@@ -1,66 +1,17 @@
-## Foundry
+# Googly Golems NFTs
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## About
+This code uses ERC115 to create a token and NFT collection contract
 
-Foundry consists of:
-
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
-
-## Documentation
-
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+## Objectives
+1. Users will be able to choose from one of three starting NFTs
+    1. Users will only be able to mint one of the three\
+        starting NFTs.
+    2. Starting NFTs will be limited and users can only\
+        mint from the remaining supply
+2. Users will be able to collect tokens used to evolve their NFTs
+    1. A certain amount will be required for each evolution level
+    2. Upon evolution the original tokenId will be burnt and\
+        a new tokenId and URI will be issued.
+3. Users will once again be able to mint a starting NFT when they have\
+    burnt their previous starting NFT
