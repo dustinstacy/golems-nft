@@ -1,7 +1,7 @@
 # Googly Golems NFTs
 
 ## About
-This code uses ERC115 to create a token and NFT collection contract
+This code uses ERC721 to create a token and NFT collection contract
 
 ## Objectives
 1. Users will be able to choose from one of three starting NFTs
