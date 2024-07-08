@@ -10,6 +10,7 @@ contract Golems is ERC721, ERC721URIStorage {
     error Golems__NoWaterGolemsLeft();
     error Golems__NoEarthGolemsLeft();
     error Golems__YourNFTIsAtMaxLevel();
+    error Golems__YouAlreadyHaveAStarter();
 
     uint256 private fireTokenCounter;
     uint256 private waterTokenCounter;
@@ -24,9 +25,21 @@ contract Golems is ERC721, ERC721URIStorage {
         THREE
     }
 
+    struct Owner {
+        bool hasStarter;
+        uint256 tokenId;
+    }
+
     mapping(uint256 tokenId => Level) private tokenIdLevel;
     mapping(uint256 tokenId => string element) private tokenIdElement;
-    mapping(address owner => uint256[] tokenIds) private collections;
+    mapping(address => Owner) private ownerStatus;
+
+    modifier checkIfHasStarter(address sender) {
+        if (ownerStatus[sender].hasStarter == true) {
+            revert Golems__YouAlreadyHaveAStarter();
+        }
+        _;
+    }
 
     constructor() ERC721('Googly Golems', 'GOG') {
         fireTokenCounter = 0;
@@ -34,33 +47,39 @@ contract Golems is ERC721, ERC721URIStorage {
         earthTokenCounter = 20;
     }
 
-    function mintFireNFT() public {
+    function mintFireNFT() public checkIfHasStarter(msg.sender) {
         if (fireTokenCounter > 9) {
             revert Golems__NoFireGolemsLeft();
         }
         tokenIdElement[fireTokenCounter] = 'fire';
         _setTokenURI(fireTokenCounter, FIRE_STARTER);
         _safeMint(msg.sender, fireTokenCounter);
+        ownerStatus[msg.sender].hasStarter = true;
+        ownerStatus[msg.sender].tokenId = fireTokenCounter;
         fireTokenCounter++;
     }
 
-    function mintWaterNFT() public {
+    function mintWaterNFT() public checkIfHasStarter(msg.sender) {
         if (waterTokenCounter > 19) {
             revert Golems__NoWaterGolemsLeft();
         }
         tokenIdElement[waterTokenCounter] = 'water';
         _setTokenURI(waterTokenCounter, WATER_STARTER);
         _safeMint(msg.sender, waterTokenCounter);
+        ownerStatus[msg.sender].hasStarter = true;
+        ownerStatus[msg.sender].tokenId = waterTokenCounter;
         waterTokenCounter++;
     }
 
-    function mintEarthNFT() public {
+    function mintEarthNFT() public checkIfHasStarter(msg.sender) {
         if (earthTokenCounter > 29) {
             revert Golems__NoEarthGolemsLeft();
         }
         tokenIdElement[earthTokenCounter] = 'earth';
         _setTokenURI(earthTokenCounter, EARTH_STARTER);
         _safeMint(msg.sender, earthTokenCounter);
+        ownerStatus[msg.sender].hasStarter = true;
+        ownerStatus[msg.sender].tokenId = earthTokenCounter;
         earthTokenCounter++;
     }
 
@@ -73,6 +92,7 @@ contract Golems is ERC721, ERC721URIStorage {
             string memory newURI = string.concat(element, 'Golem2.json');
             _setTokenURI(tokenId, newURI);
             tokenIdLevel[tokenId] = Level.TWO;
+            ownerStatus[msg.sender].hasStarter = false;
         } else if (tokenIdLevel[tokenId] == Level.TWO) {
             string memory newURI = string.concat(element, 'Golem3.json');
             _setTokenURI(tokenId, newURI);
@@ -94,7 +114,7 @@ contract Golems is ERC721, ERC721URIStorage {
         return super.supportsInterface(interfaceId);
     }
 
-    function getOwnerCollection(address owner) public view returns (uint256[] memory) {
-        return collections[owner];
+    function getTokenIdByOwner(address owner) public view returns (uint256) {
+        return ownerStatus[owner].tokenId;
     }
 }
