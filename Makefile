@@ -15,6 +15,14 @@ endif
 deploy:
 	@forge script script/DeployGolems.s.sol:DeployGolems $(NETWORK_ARGS)
 
-mint:
-	@forge script script/Interactions.s.sol:MintGolemsNFT ${NETWORK_ARGS}
+mintFire:
+	@forge script script/Interactions.s.sol:MintFireGolemsNFT ${NETWORK_ARGS}
 
+mintWater:
+	@forge script script/Interactions.s.sol:MintWaterGolemsNFT ${NETWORK_ARGS}
+
+mintEarth:
+	@forge script script/Interactions.s.sol:MintEarthGolemsNFT ${NETWORK_ARGS}
+
+evolveNFT:
+	@forge script script/Interactions.s.sol:EvolveNFT ${NETWORK_ARGS}

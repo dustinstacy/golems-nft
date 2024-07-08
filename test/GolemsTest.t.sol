@@ -13,16 +13,11 @@ contract GolemsTest is Test {
         golems = new Golems();
     }
 
-    function testTokenURI() public {
+    function testURI() public {
         vm.prank(USER);
-        golems.mintNFT();
-
-        uint256 numUsers = 4;
-        for (uint256 i = 1; i < numUsers; i++) {
-            address user = address(uint160(i));
-            hoax(user, 1 ether);
-            golems.mintNFT();
-            console.log(golems.tokenURI(i));
-        }
+        golems.mintFireNFT();
+        vm.prank(USER);
+        golems.evolveNFT(0);
+        console.log(golems.tokenURI(0));
     }
 }
