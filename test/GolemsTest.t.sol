@@ -15,9 +15,7 @@ contract GolemsTest is Test {
 
     function testURI() public {
         vm.prank(USER);
-        golems.mintFireNFT();
-        vm.prank(USER);
-        golems.evolveNFT(0);
-        console.log(golems.tokenURI(0));
+        golems.userMintStarter(Golems.Starters.STICK);
+        assert(golems.balanceOf(USER, 0) == 1);
     }
 }
