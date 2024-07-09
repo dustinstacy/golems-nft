@@ -2,57 +2,44 @@
 pragma solidity ^0.8.20;
 
 import { Script } from 'forge-std/Script.sol';
-import { Golems721 } from 'src/Golems721.sol';
+import { Golems } from 'src/Golems.sol';
 import { DevOpsTools } from 'foundry-devops/src/DevOpsTools.sol';
 
-contract MintFireGolems721NFT is Script {
+contract JoinWhiteList is Script {
     function run() external {
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment('Golems', block.chainid);
-        mint721NFTOnContract(mostRecentlyDeployed);
+        joinWhiteListOnContract(mostRecentlyDeployed);
     }
 
-    function mint721NFTOnContract(address contractAddress) public {
+    function joinWhiteListOnContract(address contractAddress) public {
         vm.startBroadcast();
-        Golems721(contractAddress).mintFireNFT();
+        Golems(contractAddress).joinWhiteList{ value: 0.05 ether }();
         vm.stopBroadcast();
     }
 }
 
-contract MintWaterGolems721NFT is Script {
+contract MintStickNFT is Script {
     function run() external {
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment('Golems', block.chainid);
-        mint721NFTOnContract(mostRecentlyDeployed);
+        mintNFTOnContract(mostRecentlyDeployed);
     }
 
-    function mint721NFTOnContract(address contractAddress) public {
+    function mintNFTOnContract(address contractAddress) public {
         vm.startBroadcast();
-        Golems721(contractAddress).mintWaterNFT();
+        Golems(contractAddress).mintStarter(Golems.Starters.STICK);
         vm.stopBroadcast();
     }
 }
 
-contract MintEarthGolems721NFT is Script {
+contract EvolveNFT is Script {
     function run() external {
         address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment('Golems', block.chainid);
-        mint721NFTOnContract(mostRecentlyDeployed);
+        evolveNFTOnContract(mostRecentlyDeployed);
     }
 
-    function mint721NFTOnContract(address contractAddress) public {
+    function evolveNFTOnContract(address contractAddress) public {
         vm.startBroadcast();
-        Golems721(contractAddress).mintEarthNFT();
-        vm.stopBroadcast();
-    }
-}
-
-contract Evolve721NFT is Script {
-    function run() external {
-        address mostRecentlyDeployed = DevOpsTools.get_most_recent_deployment('Golems', block.chainid);
-        evolve721NFTOnContract(mostRecentlyDeployed);
-    }
-
-    function evolve721NFTOnContract(address contractAddress) public {
-        vm.startBroadcast();
-        Golems721(contractAddress).evolveNFT(0);
+        Golems(contractAddress).evolveNFT(0);
         vm.stopBroadcast();
     }
 }

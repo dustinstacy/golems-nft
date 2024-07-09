@@ -15,14 +15,27 @@ endif
 deploy:
 	@forge script script/DeployGolems.s.sol:DeployGolems $(NETWORK_ARGS)
 
-mintFire:
-	@forge script script/Interactions.s.sol:MintFireGolemsNFT ${NETWORK_ARGS}
+joinWhiteList:
+	@forge script script/Interactions.s.sol:JoinWhiteList ${NETWORK_ARGS}
 
-mintWater:
-	@forge script script/Interactions.s.sol:MintWaterGolemsNFT ${NETWORK_ARGS}
-
-mintEarth:
-	@forge script script/Interactions.s.sol:MintEarthGolemsNFT ${NETWORK_ARGS}
+mintStick:
+	@forge script script/Interactions.s.sol:MintStickNFT ${NETWORK_ARGS}
 
 evolveNFT:
 	@forge script script/Interactions.s.sol:EvolveNFT ${NETWORK_ARGS}
+
+
+evolve721NFT:
+	@forge script script/Interactions721.s.sol:Evolve721NFT ${NETWORK_ARGS}
+
+mintFire:
+	@forge script script/Interactions721.s.sol:MintFireGolemsNFT ${NETWORK_ARGS}
+
+mintWater:
+	@forge script script/Interactions721.s.sol:MintWaterGolemsNFT ${NETWORK_ARGS}
+
+mintEarth:
+	@forge script script/Interactions721.s.sol:MintEarthGolemsNFT ${NETWORK_ARGS}
+
+evolve721NFT:
+	@forge script script/Interactions721.s.sol:EvolveNFT ${NETWORK_ARGS}

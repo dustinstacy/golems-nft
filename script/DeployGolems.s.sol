@@ -2,13 +2,13 @@
 pragma solidity ^0.8.20;
 
 import { Script } from 'forge-std/Script.sol';
-import { Golems721 } from 'src/Golems721.sol';
+import { Golems } from 'src/Golems.sol';
 
-contract DeployGolems721 is Script {
-    function run() external returns (Golems721 golems721) {
+contract DeployGolems is Script {
+    function run() external returns (Golems golems) {
         vm.startBroadcast();
-        golems721 = new Golems721();
+        golems = new Golems(msg.sender);
         vm.stopBroadcast();
-        return golems721;
+        return golems;
     }
 }
