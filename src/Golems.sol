@@ -7,8 +7,8 @@ import { console } from 'forge-std/console.sol';
 contract Golems is ERC1155 {
     error Golems__WhiteListPassesSoldOut();
     error Golems__MinimumDonationNotMet();
-    error Golems__RequiresWhiteListPass();
     error Golems__InsufficientPeanutBalance();
+    error Golems__YouDoNotOwnThatToken();
 
     //********Token IDs *********//
 
@@ -40,27 +40,26 @@ contract Golems is ERC1155 {
         }
         whiteListers.push(msg.sender);
         _mint(msg.sender, WHITE_LIST_PASS, 1, '');
-    }
-
-    function claimWhiteListGift() public {
-        if (balanceOf(msg.sender, WHITE_LIST_PASS) == 0) {
-            revert Golems__RequiresWhiteListPass();
-        }
-        _mint(msg.sender, PEANUTS, 1000, '');
+        _mint(msg.sender, PEANUTS, 100, '');
     }
 
     function mintStarter(Starters starter) public {
         if (balanceOf(msg.sender, PEANUTS) < 10) {
             revert Golems__InsufficientPeanutBalance();
         }
+
         safeTransferFrom(msg.sender, owner, PEANUTS, 10, '');
         _mint(msg.sender, uint256(starter), 1, '');
     }
 
     function evolveNFT(uint256 tokenId) public {
+        if (balanceOf((msg.sender), tokenId) == 0) {
+            revert Golems__YouDoNotOwnThatToken();
+        }
         if (balanceOf(msg.sender, PEANUTS) < 50) {
             revert Golems__InsufficientPeanutBalance();
         }
+        safeTransferFrom(msg.sender, owner, PEANUTS, 50, '');
         _burn(msg.sender, tokenId, 1);
         _mint(msg.sender, (tokenId + 3), 1, '');
     }

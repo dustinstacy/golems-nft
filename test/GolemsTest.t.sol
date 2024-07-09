@@ -12,6 +12,8 @@ contract GolemsTest is Test {
     uint256 public constant USER_INITIAL_BALANCE = 1 ether;
     uint256 public constant MINIMUM_DONATION = 0.05 ether;
 
+    Golems.Starters STICK = Golems.Starters.STICK;
+
     function setUp() public {
         golems = new Golems(FOUNDRY_DEFAULT_CALLER);
         vm.deal(USER, USER_INITIAL_BALANCE);
@@ -20,6 +22,12 @@ contract GolemsTest is Test {
     modifier joinWhiteList() {
         vm.prank(USER);
         golems.joinWhiteList{ value: MINIMUM_DONATION }();
+        _;
+    }
+
+    modifier mintStarter(Golems.Starters starter) {
+        vm.prank(USER);
+        golems.mintStarter(starter);
         _;
     }
 
@@ -47,45 +55,62 @@ contract GolemsTest is Test {
         golems.joinWhiteList();
     }
 
-    function testJoinWhiteListProperlyTransfersToDonater() public {
+    function testJoinWhiteListProperlyTransfersPassAndPeanutsToDonater() public {
         vm.prank(USER);
         golems.joinWhiteList{ value: MINIMUM_DONATION }();
         assert(golems.balanceOf(USER, golems.WHITE_LIST_PASS()) == 1);
-    }
-
-    /*//////////////////////////////////////////////////////////////
-                         CLAIM WHITE LIST GIFT
-    //////////////////////////////////////////////////////////////*/
-
-    function testClaimWhiteListGiftRevertsIfUserDoesNotHaveAPass() public {
-        vm.prank(USER);
-        vm.expectRevert(Golems.Golems__RequiresWhiteListPass.selector);
-        golems.claimWhiteListGift();
-    }
-
-    function testClaimWhiteListGiftProperlyTransfersPeanutsToUser() public joinWhiteList {
-        vm.prank(USER);
-        golems.claimWhiteListGift();
-        assert(golems.balanceOf(USER, golems.PEANUTS()) == 1000);
+        assert(golems.balanceOf(USER, golems.PEANUTS()) == 100);
     }
 
     /*//////////////////////////////////////////////////////////////
                               MINT STARTER
     //////////////////////////////////////////////////////////////*/
 
-    function testMintStarterRevertsIfUserDoesNotHaveEnoughPeanutes() public {}
+    function testMintStarterRevertsIfUserDoesNotHaveEnoughPeanutes() public {
+        vm.prank(USER);
+        vm.expectRevert(Golems.Golems__InsufficientPeanutBalance.selector);
+        golems.mintStarter(STICK);
+    }
 
-    function testMintStarterTransfersPeanutsFromUserToContract() public {}
+    function testMintStarterTransfersPeanutsFromUserToContract() public joinWhiteList {
+        vm.prank(USER);
+        golems.mintStarter(STICK);
+        assert(golems.balanceOf(FOUNDRY_DEFAULT_CALLER, golems.PEANUTS()) == 10);
+        assert(golems.balanceOf(USER, golems.PEANUTS()) == 90);
+    }
 
-    function testMintStarterProperlyMintsAnNFTForTheUser() public {}
+    function testMintStarterProperlyMintsAnNFTForTheUser() public joinWhiteList {
+        vm.prank(USER);
+        golems.mintStarter(STICK);
+        assert(golems.balanceOf((USER), uint256(STICK)) == 1);
+    }
 
     /*//////////////////////////////////////////////////////////////
                                EVOLVE NFT
     //////////////////////////////////////////////////////////////*/
 
-    function testEvolveNFTRevertsIfUserDoesNotHaveEnoughPeanutes() public {}
+    function testEvolveNFTRevertsIfUserDoesNotOwnTheToken() public joinWhiteList {
+        vm.prank(USER);
+        vm.expectRevert(Golems.Golems__YouDoNotOwnThatToken.selector);
+        golems.evolveNFT(uint256(STICK));
+    }
 
-    function testEvolveNFTBurnsProperNFTFromUsersBalance() public {}
+    function testEvolveNFTProperlyMintsAnEvolvedNFTForTheUserAndBurnsPreviousToken()
+        public
+        joinWhiteList
+        mintStarter(STICK)
+    {
+        vm.prank(USER);
+        golems.evolveNFT(uint256(STICK));
+        assert(golems.balanceOf(USER, uint256(STICK)) == 0);
+        assert(golems.balanceOf(USER, (uint256(STICK) + 3)) == 1);
+    }
 
-    function testEvolveNFTProperlyMintsAnEvolvedNFTForTheUser() public {}
+    function testEvolveNFTRevertsIfUserDoesNotHaveEnoughPeanuts() public joinWhiteList mintStarter(STICK) {
+        vm.prank(USER);
+        golems.evolveNFT(uint256(STICK));
+        vm.prank(USER);
+        vm.expectRevert(Golems.Golems__InsufficientPeanutBalance.selector);
+        golems.evolveNFT((uint256(STICK) + 3));
+    }
 }
